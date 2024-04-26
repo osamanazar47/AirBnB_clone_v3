@@ -18,6 +18,8 @@ import json
 import os
 import pep8
 import unittest
+from unittest.mock import patch
+
 DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
@@ -67,6 +69,37 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
+    @patch('models.engine.db_storage.DBStorage.__session', autospec=True)
+    def test_get(self, mock_session):
+        # Mock session query method to return a state object
+        mock_session.query().get.return_value = State(id='state_id', name='California')
+
+        # Call get method
+        state = models.storage.get(State, 'state_id')
+
+        # Assertions
+        self.assertIsNotNone(state)
+        self.assertEqual(state.id, 'state_id')
+        self.assertEqual(state.name, 'California')
+
+    @patch('models.engine.db_storage.DBStorage.__session', autospec=True)
+    def test_count(self, mock_session):
+        # Mock session query method to return 3 state objects
+        mock_session.query().count.return_value = 3
+
+        # Call count method without class argument
+        total_count = models.storage.count()
+
+        # Assertions
+        self.assertEqual(total_count, 3)
+
+        # Call count method with State class argument
+        state_count = models.storage.count(State)
+
+        # Assertions
+        self.assertEqual(state_count, 3)
+
+
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
@@ -86,3 +119,33 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    @patch('models.engine.file_storage.FileStorage._FileStorage__objects', autospec=True)
+    def test_get(self, mock_objects):
+        # Mock __objects dictionary to contain a state object
+        mock_objects.get.return_value = State(id='state_id', name='California')
+
+        # Call get method
+        state = models.storage.get(State, 'state_id')
+
+        # Assertions
+        self.assertIsNotNone(state)
+        self.assertEqual(state.id, 'state_id')
+        self.assertEqual(state.name, 'California')
+
+    @patch('models.engine.file_storage.FileStorage._FileStorage__objects', autospec=True)
+    def test_count(self, mock_objects):
+        # Mock __objects dictionary to contain 3 state objects
+        mock_objects.values.return_value = [State() for _ in range(3)]
+
+        # Call count method without class argument
+        total_count = models.storage.count()
+
+        # Assertions
+        self.assertEqual(total_count, 3)
+
+        # Call count method with State class argument
+        state_count = models.storage.count(State)
+
+        # Assertions
+        self.assertEqual(state_count, 3)
