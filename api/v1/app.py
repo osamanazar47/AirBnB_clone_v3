@@ -23,4 +23,3 @@ if __name__ == '__main__':
     flask_run_host = os.environ.get('FLASK_RUN_HOST', '0.0.0.0')
     flask_run_port = int(os.environ.get('HBNB_API_PORT', 5000))
     app.run(host=flask_run_host, port=flask_run_port, threaded=True)
-
