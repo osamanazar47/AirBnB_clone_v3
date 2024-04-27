@@ -3,7 +3,7 @@
 Routing /status to return the status of the API
 """
 from api.v1.views import app_views
-from flask import jsonify
+from flask import jsonify, abort
 from models import storage
 from models.amenity import Amenity
 from models.city import City
@@ -29,3 +29,10 @@ def stats():
     stats_dict["states"] = storage.count(State)
     stats_dict["users"] = storage.count(User)
     return jsonify(stats_dict)
+
+
+@app_views.route("/nop", strict_slashes=False)
+def nop():
+    response = jsonify({"error": "Not found"})
+    response.status_code = 404
+    return response
