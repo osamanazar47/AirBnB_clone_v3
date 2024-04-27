@@ -30,9 +30,3 @@ def stats():
     stats_dict["users"] = storage.count(User)
     return jsonify(stats_dict)
 
-
-@app_views.route("/nop", strict_slashes=False)
-def nop():
-    response = jsonify({"error": "Not found"})
-    response.status_code = 404
-    return response
