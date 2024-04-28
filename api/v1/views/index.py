@@ -29,4 +29,3 @@ def stats():
     stats_dict["states"] = storage.count(State)
     stats_dict["users"] = storage.count(User)
     return jsonify(stats_dict)
-

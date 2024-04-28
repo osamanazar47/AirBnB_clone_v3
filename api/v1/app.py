@@ -21,12 +21,7 @@ def teardown_db(exception):
 
 @app.errorhandler(404)
 def not_found(error):
-    """ 404 Error
-    ---
-    responses:
-      404:
-        description: a resource was not found
-    """
+    """Returns a JSON-formatted 404 status code response"""
     return make_response(jsonify({'error': "Not found"}), 404)
 
 
