@@ -12,7 +12,7 @@ from flask import jsonify, abort, request, make_response
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
                  strict_slashes=False)
-def get_all_places_in_city(city_id):
+def get_places_in_city(city_id):
     """Retrieves the list of all places objects in a city"""
     city = storage.get(City, city_id)
     if city is None:
@@ -53,19 +53,25 @@ def create_place_in_city(city_id):
     """Create a new Place object and link it to a City object
     using city_id key"""
     city = storage.get(City, city_id)
+
     if city is None:
         abort(404)
+
     json_data = request.get_json()
     if not json_data:
         return make_response("Not a JSON", 400)
+
     if 'user_id' not in json_data:
         return make_response("Missing user_id", 400)
-    user = storage.get(User, json_data.user_id)
+
+    user = storage.get(User, json_data['user_id'])
     if user is None:
         abort(404)
+
     if 'name' not in json_data:
         return make_response("Missing name", 400)
-    json_data.city_id = city_id
+
+    json_data['city_id'] = city_id
     new_place = Place(**json_data)
     new_place.save()
     return make_response(jsonify(new_place.to_dict()), 201)
