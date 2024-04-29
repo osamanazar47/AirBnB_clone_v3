@@ -55,23 +55,3 @@ def create_amenity():
     new_state = State(**json_data)
     new_state.save()
     return make_response(jsonify(new_state.to_dict()), 201)
-
-
-@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
-def update_state(state_id):
-    """Updates a specific State object with id (state_id)"""
-    state = storage.get(State, state_id)
-    if state is None:
-        abort(404)  # Raise a 404 Not Found error if state is not found
-
-    json_data = request.get_json()
-    if not json_data:
-        return make_response("Not a JSON", 400)
-
-    # Update State object with key-value pairs from JSON data
-    for key, value in json_data.items():
-        if key not in ['id', 'created_at', 'updated_at']:
-            setattr(state, key, value)
-
-    storage.save()
-    return make_response(jsonify(state.to_dict()), 200)
