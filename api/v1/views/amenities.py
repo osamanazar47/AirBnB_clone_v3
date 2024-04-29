@@ -2,10 +2,9 @@
 """
 A view for the Amenity object that handles all default RESTful API actions
 """
-from api.v1.views import app_views
-from models import storage
-from models.state import State
 from models.amenity import Amenity
+from models import storage
+from api.v1.views import app_views
 from flask import jsonify, abort, request, make_response
 
 
@@ -13,10 +12,13 @@ from flask import jsonify, abort, request, make_response
 def get_all_amenities():
     """Retrieves the list of all Amenity objects"""
     amenities = storage.all(Amenity).values()
-    return jsonify([amenity.to_dict() for amenity in amenities])
+    list_amenities = []
+    for amenity in amenities:
+        list_amenities.append(amenity.to_dict())
+    return jsonify(list_amenities)
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET'],
+@app_views.route('/amenities/<amenity_id>/', methods=['GET'],
                  strict_slashes=False)
 def get_amenity(amenity_id):
     """
@@ -30,10 +32,7 @@ def get_amenity(amenity_id):
     return jsonify(amenity.to_dict())
 
 
-d = 'DELETE'
-
-
-@app_views.route('/amenities/<amenity_id>', methods=[d],
+@app_views.route('/amenities/<amenity_id>', methods=['DELETE'],
                  strict_slashes=False)
 def delete_amenity(amenity_id):
     """Deletes a specific Amenity object with id (amenity_id)"""
@@ -47,6 +46,7 @@ def delete_amenity(amenity_id):
 
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def create_amenity():
+    """creates an amenity object"""
     json_data = request.get_json()
     if not json_data:
         return make_response("Not a JSON", 400)
@@ -62,12 +62,12 @@ def create_amenity():
                  strict_slashes=False)
 def update_amenity(amenity_id):
     """Updates a specific Amenity object with id (amenity_id)"""
-    amenity = storage.get(State, amenity_id)
-    if not amenity:
-        abort(404)  # Raise a 404 Not Found error if amenity is not found
-
     if not request.get_json():
         abort(400, description="Not a JSON")
+
+    amenity = storage.get(Amenity, amenity_id)
+    if not amenity:
+        abort(404)  # Raise a 404 Not Found error if amenity is not found
 
     json_data = request.get_json()
     # Update State object with key-value pairs from JSON data
