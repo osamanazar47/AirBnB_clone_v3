@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-A view for the city object that handles all default RESTful API actions
+A view for the Place object that handles all default RESTful API actions
 """
 from api.v1.views import app_views
 from models import storage
@@ -31,7 +31,7 @@ def get_place(place_id):
     """
     place = storage.get(Place, place_id)
     if place is None:
-        abort(404)  # Raise a 404 Not Found error if state is not found
+        abort(404)  # Raise a 404 Not Found error if place is not found
     return jsonify(place.to_dict())
 
 
@@ -41,7 +41,7 @@ def delete_place(place_id):
     """Deletes a specific Place object with id (place_id)"""
     place = storage.get(Place, place_id)
     if place is None:
-        abort(404)  # Raise a 404 Not Found error if state is not found
+        abort(404)  # Raise a 404 Not Found error if place is not found
     storage.delete(place)
     storage.save()
     return make_response(jsonify({}), 200)
@@ -83,13 +83,13 @@ def update_place(place_id):
     """Updates a specific Place object with id (place_id)"""
     place = storage.get(Place, place_id)
     if place is None:
-        abort(404)  # Raise a 404 Not Found error if state is not found
+        abort(404)  # Raise a 404 Not Found error if place is not found
 
     json_data = request.get_json()
     if not json_data:
         return make_response("Not a JSON", 400)
 
-    # Update State object with key-value pairs from JSON data
+    # Update Place object with key-value pairs from JSON data
     for key, value in json_data.items():
         if key not in ['id', 'user_id', 'city_id', 'created_at', 'updated_at']:
             setattr(place, key, value)
