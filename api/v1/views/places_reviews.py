@@ -50,7 +50,7 @@ def delete_review(review_id):
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'],
                  strict_slashes=False)
-def create_review_fro_place(place_id):
+def create_review_for_place(place_id):
     """Create a new Review object and link it to a Place object
     using place_id key"""
     place = storage.get(Place, place_id)
@@ -80,7 +80,7 @@ def create_review_fro_place(place_id):
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'],
                  strict_slashes=False)
-def update_place(review_id):
+def update_review(review_id):
     """Updates a specific Review object with id (review_id)"""
     review = storage.get(Review, review_id)
     if review is None:
