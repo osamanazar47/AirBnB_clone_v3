@@ -92,7 +92,8 @@ def update_review(review_id):
 
     # Update Place object with key-value pairs from JSON data
     for key, value in json_data.items():
-        if key not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+        if key not in ['id', 'user_id', 'place_id',
+                       'created_at', 'updated_at']:
             setattr(review, key, value)
 
     storage.save()
