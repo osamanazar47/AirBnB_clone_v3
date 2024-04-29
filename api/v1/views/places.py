@@ -23,7 +23,7 @@ def get_all_places_in_city(city_id):
 
 @app_views.route('/places/<place_id>', methods=['GET'],
                  strict_slashes=False)
-def get_city(place_id):
+def get_place(place_id):
     """
     Retrieves a Place object by place_id
     - If the place_id is not linked to any Place object,
@@ -37,7 +37,7 @@ def get_city(place_id):
 
 @app_views.route('/places/<place_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_city(place_id):
+def delete_place(place_id):
     """Deletes a specific Place object with id (place_id)"""
     place = storage.get(Place, place_id)
     if place is None:
@@ -65,8 +65,8 @@ def create_place_in_city(city_id):
         abort(404)
     if 'name' not in json_data:
         return make_response("Missing name", 400)
+    json_data.city_id = city_id
     new_place = Place(**json_data)
-    new_place.city_id = city_id
     new_place.save()
     return make_response(jsonify(new_place.to_dict()), 201)
 
