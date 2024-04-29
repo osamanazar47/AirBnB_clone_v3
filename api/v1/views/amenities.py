@@ -16,7 +16,8 @@ def get_all_amenities():
     return jsonify([amenity.to_dict() for amenity in amenities])
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/amenities/<amenity_id>', methods=['GET'],
+                 strict_slashes=False)
 def get_amenity(amenity_id):
     """
     Retrieves an Amenity object by amenity_id
@@ -62,7 +63,7 @@ def create_amenity():
 def update_amenity(amenity_id):
     """Updates a specific Amenity object with id (amenity_id)"""
     amenity = storage.get(State, amenity_id)
-    if  not amenity:
+    if not amenity:
         abort(404)  # Raise a 404 Not Found error if amenity is not found
 
     if not request.get_json():
