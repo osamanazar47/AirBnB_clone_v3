@@ -11,8 +11,11 @@ from flask import jsonify, abort, request, make_response
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 def get_all_users():
     """Retrieves the list of all User objects"""
-    users = storage.all(User).values()
-    return jsonify([user.to_dict() for user in users])
+    all_users = storage.all(User).values()
+    list_users = []
+    for user in all_users:
+        list_users.append(user.to_dict())
+    return jsonify(list_users)
 
 
 @app_views.route('/users/<user_id>/', methods=['GET'],
@@ -47,8 +50,10 @@ def create_user():
     json_data = request.get_json()
     if not json_data:
         return make_response("Not a JSON", 400)
-    if 'name' not in json_data:
-        return make_response("Missing name", 400)
+    if 'email' not in json_data:
+        return make_response("Missing email", 400)
+    if 'password' not in json_data:
+        return make_response("Missing password", 400)
 
     new_user = User(**json_data)
     new_user.save()
@@ -69,7 +74,7 @@ def update_user(user_id):
     json_data = request.get_json()
     # Update State object with key-value pairs from JSON data
     for key, value in json_data.items():
-        if key not in ['id', 'created_at', 'updated_at']:
+        if key not in ['id', 'email', 'created_at', 'updated_at']:
             setattr(user, key, value)
 
     storage.save()
