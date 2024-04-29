@@ -52,6 +52,27 @@ def create_amenity():
     if 'name' not in json_data:
         return make_response("Missing name", 400)
 
-    new_state = State(**json_data)
-    new_state.save()
-    return make_response(jsonify(new_state.to_dict()), 201)
+    new_amenity = Amenity(**json_data)
+    new_amenity.save()
+    return make_response(jsonify(new_amenity.to_dict()), 201)
+
+
+@app_views.route('/amenities/<amenity_id>', methods=['PUT'],
+                 strict_slashes=False)
+def update_amenity(amenity_id):
+    """Updates a specific Amenity object with id (amenity_id)"""
+    amenity = storage.get(State, amenity_id)
+    if  not amenity:
+        abort(404)  # Raise a 404 Not Found error if amenity is not found
+
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+
+    json_data = request.get_json()
+    # Update State object with key-value pairs from JSON data
+    for key, value in json_data.items():
+        if key not in ['id', 'created_at', 'updated_at']:
+            setattr(amenity, key, value)
+
+    storage.save()
+    return make_response(jsonify(amenity.to_dict()), 200)
