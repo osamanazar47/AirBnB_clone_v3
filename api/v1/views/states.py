@@ -44,12 +44,12 @@ def delete_state(state_id):
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
-    json_data = request.get_json()
-    if not json_data:
-        return make_response("Not a JSON", 400)
-    if 'name' not in json_data:
-        return make_response("Missing name", 400)
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+    if 'name' not in request.get_json():
+        abort(400, description="Missing name")
 
+    json_data = request.get_json()
     new_state = State(**json_data)
     new_state.save()
     return make_response(jsonify(new_state.to_dict()), 201)
@@ -62,10 +62,10 @@ def update_state(state_id):
     if state is None:
         abort(404)  # Raise a 404 Not Found error if state is not found
 
-    json_data = request.get_json()
-    if not json_data:
-        return make_response("Not a JSON", 400)
+    if not request.get_json():
+        abort(400, description="Not a JSON")
 
+    json_data = request.get_json()
     # Update State object with key-value pairs from JSON data
     for key, value in json_data.items():
         if key not in ['id', 'created_at', 'updated_at']:
